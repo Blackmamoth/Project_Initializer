@@ -1,12 +1,15 @@
-from .base import BaseModel
+'''Handles javascript framework initialization related tasks'''
+import subprocess
 from common.framework_enums import JSFrameworkEnums
 from config.console import Console
 from constants.help_text import FRAMEWORK_NOT_SUPPORTED
 from config.filesystem import FileSystem
-import subprocess
+from .base import BaseModel
 
 
 class JavaScriptFramework(BaseModel):
+    '''JavaScriptFramework class will be used for javascript language
+    and framework dependency and setup handling'''
 
     EXPRESS_DEFAULT_CONTENT = r"""const express = require('express')
 const app = express()
@@ -20,9 +23,9 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })"""
 
-    def __init__(self, framework: int, project_root_dir: str, ts: bool = False) -> None:
+    def __init__(self, framework: int, project_root_dir: str, ts_env: bool = False) -> None:
         super().__init__(framework, project_root_dir)
-        self.ts = ts
+        self.ts_env = ts_env
         self.dependencies = ["node", "npm", "npx"]
         self.framework_dev_dependencies = ["nodemon", "dotenv"]
 
@@ -34,10 +37,12 @@ app.listen(port, () => {
                 self.setup_express()
             else:
                 Console.info(FRAMEWORK_NOT_SUPPORTED)
-        except Exception as e:
-            Console.error(e)
+        except OSError:
+            Console.error(
+                'Something went wrong while initializing node project.')
 
     def setup_express(self) -> None:
+        '''Setup minial express api'''
         try:
             self.framework_dependencies = [
                 "express", "express-async-handler", "http-errors",
@@ -55,9 +60,11 @@ app.listen(port, () => {
                 f"npm i -D {' '.join(self.framework_dev_dependencies)}", shell=True)
             Console.info('Dependencies successfully installed.')
             FileSystem.create_file(
-                "app.js", project_dir_path=self.project_root_dir, content=self.EXPRESS_DEFAULT_CONTENT)
+                "app.js", project_dir_path=self.project_root_dir,
+                content=self.EXPRESS_DEFAULT_CONTENT)
             FileSystem.create_folders_in_root(
                 self.root_folders, self.project_root_dir)
             Console.success("Project successfully intialized!!!.")
-        except Exception as e:
-            Console.error(e)
+        except OSError:
+            Console.error(
+                'An error occured while setting up express application.')
