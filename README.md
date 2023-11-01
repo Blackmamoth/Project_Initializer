@@ -1,4 +1,4 @@
-# Project Initializer (CURRENTLY ONLY SUPPORTED FOR UNIX/LINUX Platforms)
+# Project Initializer (CURRENTLY ONLY WORKS FOR UNIX/LINUX Platforms)
 
 Project Initializer is a command-line utility written in Python that helps you create basic boilerplate for frameworks that don't have CLI support. It simplifies the process of setting up a new project by generating the necessary files and directory structure for your chosen language and framework.
 
